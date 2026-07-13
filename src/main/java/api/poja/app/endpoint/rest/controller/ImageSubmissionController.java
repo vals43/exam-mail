@@ -8,9 +8,6 @@ import api.poja.app.endpoint.event.model.ImageSubmitted;
 import api.poja.app.entity.ImageSubmission;
 import api.poja.app.file.bucket.BucketComponent;
 import api.poja.app.repository.ImageSubmissionRepository;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotNull;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -37,8 +34,8 @@ public class ImageSubmissionController {
       value = "/image-submission",
       consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<String> submitImage(
-      @RequestParam @Valid @NotNull @Email String email,
-      @RequestParam @Valid @NotNull MultipartFile file)
+      @RequestParam String email,
+      @RequestParam MultipartFile file)
       throws IOException {
     var id = randomUUID();
     var originalFilename = file.getOriginalFilename();
