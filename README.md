@@ -40,3 +40,71 @@ public class SendEmailRequestedService implements Consumer<SendEmailRequested> {
 Produce the event from any controller — Poja routes it to the worker automatically.
 
 > Part of the [Poja platform](https://poja.io) — deploy Spring Boot in minutes.
+
+---
+
+## Image Submission — Endpoints de test
+
+### Base URL
+
+Replace `{base_url}` with the actual Lambda URL from your Poja deployment.
+
+```
+https://xxxxxxxxxx.lambda-url.eu-west-3.on.aws
+```
+
+### 1. Health check
+
+```bash
+curl {base_url}/ping
+# → pong
+```
+
+### 2. POST — Soumettre une image
+
+```bash
+curl -X POST {base_url}/image-submission \
+  -F "email=test@example.com" \
+  -F "file=@/chemin/vers/image.jpg"
+```
+
+**Réponse** : `202 Accepted` — retourne l'UUID de la soumission.
+
+Ce que fait l'endpoint :
+1. Upload l'image vers S3 (`submissions/{uuid}-{filename}`)
+2. Sauvegarde en base de données (PostgreSQL)
+3. Produit un événement asynchrone `ImageSubmitted`
+4. Un worker Lambda consomme l'événement et envoie un email avec un lien presigné S3 (valable 24h)
+
+### 3. GET — Liste des soumissions
+
+```bash
+curl {base_url}/image-submission
+```
+
+**Réponse** : `200 OK`
+
+```json
+[
+  {
+    "id": "uuid",
+    "nomFichier": "image.jpg",
+    "email": "test@example.com",
+    "createdAt": "2026-07-13T06:30:00Z"
+  }
+]
+```
+
+### Workflow complet
+
+```
+POST /image-submission
+    ↓ (sync)
+Upload S3 + Save DB + Produce Event
+    ↓ (async — EventBridge → SQS → Lambda Worker)
+ImageSubmittedService
+    ↓
+Presign S3 URL + Send Email via SES
+    ↓
+User receives email with image link
+```
