@@ -149,9 +149,9 @@ dependencies {
     testImplementation 'org.junit-pioneer:junit-pioneer:2.2.0'
 
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa:3.2.2'
-    implementation 'org.postgresql:postgresql:42.7.1'
+    implementation 'org.postgresql:postgresql:42.6.0'
     implementation 'org.flywaydb:flyway-core:9.22.3'
-    runtimeOnly 'org.flywaydb:flyway-database-postgresql:10.7.1'
+    implementation 'org.hibernate.orm:hibernate-community-dialects:6.4.3.Final'
     testRuntimeOnly 'com.h2database:h2:2.2.224'
 
 
