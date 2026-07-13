@@ -1,1 +1,8 @@
 rootProject.name = 'mail-exam-36078853'
+
+pluginManagement {
+  repositories {
+    mavenCentral()
+    gradlePluginPortal()
+  }
+}
